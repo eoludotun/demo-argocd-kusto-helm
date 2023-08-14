@@ -4,7 +4,7 @@ metadata:
   name: app-of-apps
   namespace: argocd
 spec:
-  project: default
+  project: demo-project
   source:
     repoURL: 'https://github.com/eoludotun/demo-argocd-kusto-helm'
     targetRevision: HEAD
