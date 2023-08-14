@@ -9,7 +9,7 @@ spec:
   destination:
     namespace: guestbook
     name: minikube
-  project: default
+  project: demo-project
   source:
     path: general/helm-guestbook
     repoURL: https://github.com/morey-tech/argocd-example-apps
