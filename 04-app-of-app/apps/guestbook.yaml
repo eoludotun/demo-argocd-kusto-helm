@@ -7,8 +7,8 @@ metadata:
   - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
-    namespace: guestbook
-    name: minikube
+    server: 'https://kubernetes.default.svc'
+    namespace: external-secrets
   project: default   #demo-project
   source:
     path: general/helm-guestbook
