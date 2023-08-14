@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/eoludotun/demo-argocd-kusto-helm
     targetRevision: main
-    path: apps
+    path: 04-app-of-app/apps
   destination:
     server: https://kubernetes.default.svc
     namespace: demo-dev
