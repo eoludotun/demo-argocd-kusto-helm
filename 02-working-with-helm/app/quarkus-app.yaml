@@ -8,7 +8,7 @@ spec:
   destination:
     namespace: demo
     server: https://kubernetes.default.svc
-  project: demo-dev-project
+  project: default
   source:
     helm:
       parameters:
