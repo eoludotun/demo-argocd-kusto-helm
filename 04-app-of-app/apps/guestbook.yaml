@@ -9,7 +9,7 @@ spec:
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: external-secrets
-  project: default   #demo-project
+  project: demo-dev
   source:
     path: general/helm-guestbook
     repoURL: https://github.com/morey-tech/argocd-example-apps
