@@ -1,2 +1,9 @@
-hello-world:
-  replicaCount: 1
+quarkus:
+  build:
+    enabled: false
+  deploy:
+    route:
+      enabled: false
+    replicas: 2
+  image:
+    name: quay.io/redhatworkshops/gitops-helm-quarkus
