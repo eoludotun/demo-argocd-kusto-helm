@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/eoludotun/demo-argocd-kusto-helm
     targetRevision: main
-    path: 1-working-with-kustomize/overlays/dev-env
+    path: 01-working-with-kustomize/overlays/dev-env
   destination:
     server: https://kubernetes.default.svc
     namespace: demo-dev
