@@ -1,0 +1,70 @@
+
+#!/bin/bash
+
+# Define the target cluster name to search for
+TARGET_CLUSTER_NAME="minikube"
+
+kubectl create ns argocd
+
+helm repo add argo https://argoproj.github.io/argo-helm
+
+helm uninstall argocd -n argocd
+
+kubectl delete  CustomResourceDefinition applications.argoproj.io applicationsets.argoproj.io appprojects.argoproj.io
+kubectl delete argocd-manager -n kube-system
+kubectl delete ClusterRole argocd-manager-role
+kubectl delete ClusterRoleBinding argocd-manager-role-binding
+
+helm install argocd argo/argo-cd -n argocd
+
+kubectl get all -n argocd
+
+# POD_NAME=$(kubectl get pods -n argocd -o=jsonpath='{.items[*].metadata.name}')
+
+POD_NAME=$(kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o=jsonpath='{.items[0].metadata.name}')
+sleep 40
+
+if [[ $(kubectl get pod $POD_NAME -n argocd -o 'jsonpath={.status.conditions[?(@.type=="Ready")].status}') == "True" ]]; then
+    echo "Pod $POD_NAME is ready. Proceeding with further actions."
+else
+    echo "Pod $POD_NAME is not ready. Proceeding  further actions manually"
+    exit 1  # Exit the script with a non-zero status code
+fi
+echo "Pod $POD_NAME is ready. Proceeding with further actions."
+
+ARGO_SECRET=$(kubectl -n argocd get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -d)
+
+# Create project
+echo "Creating the main project..."
+kubectl apply -f manifests/project.yaml
+
+kill -9 $(lsof -t -i :8080)
+kubectl port-forward svc/argocd-server -n argocd 8080:443 &
+
+# Get a list of available clusters using kubectl
+CLUSTERS=$(kubectl config get-contexts -o=name | cut -d'/' -f2)
+
+# login cluster
+argocd login localhost:8080 --insecure --username="admin" --password=$ARGO_SECRET
+
+# adding cluster
+argocd cluster add $CLUSTERS  --insecure --in-cluster -y --upsert
+
+#get cluster info
+argocd cluster get  $CLUSTERS -o wide
+
+echo "Creating the main project..."
+kubectl apply -f project.yaml
+
+
+# argocd proj create demo-project --description "Demo ArgoCD Project with auto-sync" --source-repo https://github.com/eoludotun/demo-argocd-kusto-helm  --dest-namespace test --dest-server https://kubernetes.default.svc --sync-policy auto
+
+# argocd app create chart-test --repo https://github.com/eoludotun/demo-argocd-kusto-helm --path 02-working-with-helm/helm-umbrella-chart --dest-namespace test-chart --dest-server https://kubernetes.default.svc --self-heal --sync-policy automated --sync-retry-limit 5 --revision main
+
+#argocd app create chart-test-app --repo https://github.com/eoludotun/demo-argocd-kusto-helm --path 02-working-with-helm/app --dest-namespace test-chart --dest-server https://kubernetes.default.svc --self-heal --sync-policy automated --sync-retry-limit 5 --revision main
+
+#https://kubebyexample.com/learning-paths/argo-cd/argo-cd-working-helm
+
+
+# argocd app create demo-test-01 --repo https://github.com/eoludotun/demo-argocd-kusto-helm --path 01-working-with-kustomize/overlays/default \
+# --dest-namespace kapp --dest-server https://kubernetes.default.svc --self-heal --sync-policy automated --sync-retry-limit 5 --revision main
