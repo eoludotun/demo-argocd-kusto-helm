@@ -57,6 +57,30 @@ echo "Creating the main project..."
 kubectl apply -f project.yaml
 
 
+
+
+alias k='kubectl'
+alias k-list-k8s-contexts='kubectl config get-contexts'
+alias argo-login='argocd login localhost:8080 --insecure'
+alias argo-ls-app='argocd app list'
+alias argo-port-forward='kubectl port-forward svc/argocd-server -n argocd 8080:443'
+alias argo-get-secret='kubectl -n argocd get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | 
+base64 -d'
+alias k-export-k8-config-location='export KUBECONFIG=~/.kube/config:~/.kube/jenkins_config:~/.kube/pp_config'
+alias k-set-my-k8-cluster='kubectl config use-context'
+alias argo-add-minikube='argocd cluster add minikube  --insecure --in-cluster -y --upsert'
+alias argo-get-minikube-info='argocd cluster get  minikube -o wide'
+alias argo-rm-minikube='argocd cluster rm minikube'
+alias argo-rm-k8s='argocd cluster rm'
+alias k-detail-current-k8s-context='kubectl config current-context'
+alias k-get-k8s-context-info='kubectl get context'
+alias k-switch-k8s-context='kubectl config use-context'
+alias k-c='k config view --minify | grep name'
+alias k-des-p='kubectl describe pod'
+alias c='clear'
+alias k-edit-p=
+
+
 # argocd proj create demo-project --description "Demo ArgoCD Project with auto-sync" --source-repo https://github.com/eoludotun/demo-argocd-kusto-helm  --dest-namespace test --dest-server https://kubernetes.default.svc --sync-policy auto
 
 # argocd app create chart-test --repo https://github.com/eoludotun/demo-argocd-kusto-helm --path 02-working-with-helm/helm-umbrella-chart --dest-namespace test-chart --dest-server https://kubernetes.default.svc --self-heal --sync-policy automated --sync-retry-limit 5 --revision main
